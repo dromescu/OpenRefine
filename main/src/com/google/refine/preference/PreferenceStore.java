@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Properties;
 import java.util.Set;
 
@@ -47,7 +48,9 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 
-public class PreferenceStore implements Jsonizable {
+import javafx.util.Pair;
+
+public class PreferenceStore extends Observable implements Jsonizable {
     public static final String USER_METADATA_KEY = "userMetadata";
     
     private boolean dirty = false;
@@ -60,6 +63,9 @@ public class PreferenceStore implements Jsonizable {
             _prefs.put(key, value);
         }
         dirty = true;
+        
+        setChanged();
+        notifyObservers(new Pair<String, Object>(key, value));
     }
     
     public Object get(String key) {

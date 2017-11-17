@@ -39,6 +39,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -53,6 +55,8 @@ import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import javafx.util.Pair;
 
 public class ProjectMetadata implements Jsonizable {
     private final Date     _created;
@@ -254,8 +258,26 @@ public class ProjectMetadata implements Jsonizable {
         return pm;
     }
     
-    static protected void preparePreferenceStore(PreferenceStore ps) {
+    protected void preparePreferenceStore(PreferenceStore ps) {
         ProjectManager.preparePreferenceStore(ps);
+        
+        ps.addObserver(new Observer() {
+            public void update(Observable obj, Object arg) {
+                Pair<String, Object> kv = (Pair<String, Object>)arg;
+                
+                logger.info("Received message: " + kv.toString());
+                
+                if (kv.getKey().equals("userMetadata")) {
+                    try {
+                        _userMetadata = new JSONArray(kv.getValue().toString());
+                    } catch (JSONException e) {
+                        // ignore the setting but log it
+                        logger.error(ExceptionUtils.getFullStackTrace(e));
+                    }
+                }
+            }
+        });
+        
         // Any project specific preferences?
     }
 
@@ -434,5 +456,4 @@ public class ProjectMetadata implements Jsonizable {
             logger.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
-    
 }
