@@ -224,7 +224,24 @@
 
     <!-- ================================================================== -->
 
-    <target name="prepare_webapp" depends="jar_webapp, build">
+	<available file=".git" type="dir" property="git.present"/>
+
+    <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+        <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+            <arg value="--always"/>
+            <arg value="HEAD"/>
+        </exec>
+        <condition property="repository.version" value="${git.revision}" else="unknown">
+            <and>
+                <isset property="git.revision"/>
+                <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+            </and>
+        </condition>
+    </target>
+	
+    <target name="prepare_webapp" depends="git.revision, jar_webapp, build">
         <mkdir dir="${built.webapp.dir}" />
         
         <copy todir="${built.webapp.dir}">
@@ -248,8 +265,11 @@
             </fileset>
         </copy>
         
+    	<echo message="Version ${VERSION} and Revision ${repository.version}"/>
+    	
         <replace file="${built.webapp.dir}/WEB-INF/web.xml">
-            <replacefilter token="$VERSION" value="${version}"/>
+            <replacefilter token="$VERSION" value="${VERSION}"/>
+        	<replacefilter token="$REVISION" value="${repository.version}"/>
         </replace>
 
         <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
