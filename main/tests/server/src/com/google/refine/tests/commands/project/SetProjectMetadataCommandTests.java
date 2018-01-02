@@ -57,9 +57,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.project.SetProjectMetadataCommand;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 
 public class SetProjectMetadataCommandTests extends RefineTest {
@@ -102,6 +103,8 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(projMan.getProject(anyLong())).thenReturn(proj);
+        
+        // below two should return the same object
         when(proj.getMetadata()).thenReturn(metadata);
         
         try {
@@ -141,7 +144,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
 
         // verify
-        verify(request, times(2)).getParameter("project");      
+        verify(request, times(1)).getParameter("name");      
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
@@ -154,6 +157,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
+//        Assert.assertEquals(proj.getProjectMetadata().getName(), "subject");
         Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
     
@@ -189,7 +193,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        JSONObject obj = (JSONObject) proj.getMetadata().getUserMetadata().get(0);
+        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getMetadata()).getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name"), "clientID");
         Assert.assertEquals(obj.get("value"), "IBM");
     }

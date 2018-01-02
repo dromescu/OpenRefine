@@ -47,8 +47,8 @@ import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 
@@ -139,6 +139,55 @@ public class ImportingJob implements Jsonizable {
         }
     }
     
+    /**
+     * TO check if the file record is a metadata file entry
+     * @param fileRecordObject
+     * @return JSONObject
+     */
+    public boolean isMetadataFileRecord(JSONObject fileRecordObject) {
+        return fileRecordObject.has("metaDataFormat");
+    }
+    
+    /**
+     * Return the metadata file record if there is any.
+     * @return JSONObject
+     */
+//    public JSONObject getMetadataFileRecord() {
+//        JSONObject retrievalRecord = getRetrievalRecord();
+//        if (retrievalRecord != null) {
+//            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+//            if (fileRecordArray != null) {
+//                    for (int i = 0; i < fileRecordArray.length(); i++) {
+//                        JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecordArray, i);
+//                        if (isMetadataFileRecord(fileRecord))
+//                            return fileRecord;
+//                    }
+//            }
+//        }
+//        
+//        return null;
+//    }
+    
+    /**
+     * Return the index of metadata file record if found any.
+     * If there is none, return -1
+     * @return
+     */
+//    public int getMetadataFileRecordIndex() {
+//        JSONObject retrievalRecord = getRetrievalRecord();
+//        if (retrievalRecord != null) {
+//            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+//            if (fileRecordArray != null) {
+//                    for (int i = 0; i < fileRecordArray.length(); i++) {
+//                        JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecordArray, i);
+//                        if (isMetadataFileRecord(fileRecord))
+//                            return i;
+//                    }
+//            }
+//        }
+//        
+//        return -1;
+//    }
     
     public List<JSONObject> getSelectedFileRecords() {
         List<JSONObject> results = new ArrayList<JSONObject>();
@@ -208,5 +257,4 @@ public class ImportingJob implements Jsonizable {
             writer.endObject();
         }
     }
-    
 }

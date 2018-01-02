@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
